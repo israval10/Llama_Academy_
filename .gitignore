@@ -1,0 +1,7 @@
+# Archivos intermedios de build (se regeneran con scripts/build.py)
+/build/
+
+# Sistema
+.DS_Store
+__pycache__/
+*.pyc

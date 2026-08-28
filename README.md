@@ -1,10 +1,20 @@
 # Llama_Academy
 
 Sitio de capacitación **LlamaLeads Academy** — catálogo de cursos para
-aprender a usar el **CRM Llamaleads**, con buscador en vivo y un asistente
-tipo chatbot. Es un único archivo `index.html` autocontenido (sin backend,
-sin build step para el usuario final), generado a partir de los datos de
-la base de Notion `//Llama_Academy`.
+aprender a usar el **CRM Llamaleads**, con:
+
+- Buscador en vivo (filtra por título, descripción y módulo)
+- Asistente tipo chatbot (sugiere clases según palabras clave)
+- Tema oscuro con halo "flame" animado en el hero
+- Navbar flotante en vidrio esmerilado con menú hamburguesa (en todas las
+  resoluciones) — cada categoría se despliega en un acordeón con acceso
+  directo a cada uno de sus módulos
+- Barra de búsqueda + asistente flotante (sticky) que acompaña al usuario
+  al recorrer el catálogo
+
+Es un único archivo `index.html` autocontenido (sin backend, sin build
+step para el usuario final), generado a partir de los datos de la base de
+Notion `//Llama_Academy`.
 
 🔗 Abrir `index.html` directamente en el navegador, o subirlo a cualquier
 hosting estático (Netlify, GitHub Pages, etc.).

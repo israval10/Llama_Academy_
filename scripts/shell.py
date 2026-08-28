@@ -40,6 +40,7 @@ HTML = f'''<!DOCTYPE html>
   --red-50:#E12A2A;
   --red-20:#F3AAAA;
   --red-10:#F8CCCC;
+  --violet:#A78BFA;
   --ink:#020201;
   --ink-50:#2C2C2B;
   --ink-40:#565656;
@@ -51,6 +52,16 @@ HTML = f'''<!DOCTYPE html>
   --white:#FFFFFF;
   --page-bg:#F0F0EE;
 
+  --bg:#0A0A09;
+  --bg-alt:#111110;
+  --surface:rgba(255,255,255,.035);
+  --surface-strong:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);
+  --line-amber:rgba(241,199,33,.22);
+  --text:#F3F2EE;
+  --text-dim:rgba(243,242,238,.62);
+  --text-faint:rgba(243,242,238,.38);
+
   --font-display:'Sora', sans-serif;
   --font-body:'Inter', sans-serif;
 
@@ -59,9 +70,9 @@ HTML = f'''<!DOCTYPE html>
   --radius-lg:22px;
   --radius-pill:999px;
 
-  --shadow-sm:0 1px 2px rgba(2,2,1,0.06), 0 1px 1px rgba(2,2,1,0.04);
-  --shadow-md:0 8px 24px rgba(2,2,1,0.08), 0 2px 6px rgba(2,2,1,0.05);
-  --shadow-lg:0 20px 48px rgba(2,2,1,0.16), 0 4px 12px rgba(2,2,1,0.06);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.35);
+  --shadow-md:0 14px 34px rgba(0,0,0,0.5);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.6);
 
   --brand-mark: url("data:image/png;base64,{MARK_B64}");
 }}
@@ -76,79 +87,134 @@ html{{scroll-behavior:smooth;}}
 body{{
   margin:0;
   font-family:var(--font-body);
-  color:var(--ink);
-  background:var(--page-bg);
+  color:var(--text);
+  background:var(--bg);
   line-height:1.55;
 }}
 ::selection{{ background:var(--yellow); color:var(--ink); }}
-a{{ color:var(--red); }}
+a{{ color:var(--yellow); }}
 img{{max-width:100%; display:block;}}
 .wrap{{ max-width:1220px; margin:0 auto; padding:0 32px; }}
-h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; }}
+h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; color:var(--text); }}
 
 /* ---------- NAV ---------- */
 .nav{{
-  position:sticky; top:0; z-index:50;
-  background:rgba(250,250,250,0.88);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--ink-10);
+  position:fixed; top:16px; left:16px; right:16px; z-index:100;
+  max-width:1220px; margin:0 auto;
+  border:1px solid var(--line-amber); border-radius:22px;
+  background:
+    radial-gradient(circle at 46% 0%, rgba(241,199,33,.14), transparent 40%),
+    radial-gradient(circle at 64% 8%, rgba(219,0,0,.10), transparent 42%),
+    rgba(20,19,17,.66);
+  box-shadow:0 18px 50px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03) inset;
+  backdrop-filter:blur(18px) saturate(1.15);
+  -webkit-backdrop-filter:blur(18px) saturate(1.15);
 }}
 .nav-inner{{
-  max-width:1220px; margin:0 auto; padding:12px 32px;
+  padding:10px 20px;
   display:flex; align-items:center; justify-content:space-between; gap:24px;
 }}
-.nav-brand{{ display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); }}
-.nav-brand .brand-icon{{ width:34px; height:34px; }}
-.nav-brand span{{ font-family:var(--font-display); font-weight:700; font-size:16px; letter-spacing:-.2px; }}
-.nav-brand small{{ display:block; font-family:var(--font-body); font-weight:600; font-size:10px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-30); }}
-.nav-links{{ display:flex; gap:8px; list-style:none; margin:0; padding:0; }}
-.nav-links a{{
-  color:var(--ink-50); text-decoration:none; font-size:13.5px; font-weight:700;
-  padding:9px 16px; border-radius:var(--radius-pill); transition:.15s;
+.nav-brand{{ display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); }}
+.nav-brand .brand-icon{{ width:32px; height:32px; }}
+.nav-brand span{{ font-family:var(--font-display); font-weight:700; font-size:15px; letter-spacing:-.2px; color:var(--text); }}
+.nav-brand small{{ display:block; font-family:var(--font-body); font-weight:600; font-size:9.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--text-faint); }}
+
+.nav-toggle{{
+  flex:none; display:inline-flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+  width:42px; height:42px; border:1px solid rgba(241,199,33,.22); border-radius:13px;
+  background:rgba(0,0,0,.22); cursor:pointer; padding:0;
 }}
-.nav-links a:hover{{ background:var(--ink-10); color:var(--ink); }}
-@media (max-width:720px){{ .nav-links{{ display:none; }} }}
+.nav-toggle span{{ width:18px; height:2px; border-radius:999px; background:var(--yellow); transition:transform .22s ease, opacity .22s ease; }}
+.nav.is-open .nav-toggle span:nth-child(1){{ transform:translateY(7px) rotate(45deg); }}
+.nav.is-open .nav-toggle span:nth-child(2){{ opacity:0; }}
+.nav.is-open .nav-toggle span:nth-child(3){{ transform:translateY(-7px) rotate(-45deg); }}
+.nav-toggle:hover{{ border-color:rgba(241,199,33,.42); background:rgba(241,199,33,.08); }}
+
+.nav-menu{{
+  position:absolute; top:calc(100% + 10px); left:0; right:0;
+  list-style:none; margin:0; display:flex; flex-direction:column; gap:6px; padding:12px;
+  border:1px solid var(--line-amber); border-radius:18px;
+  background:
+    radial-gradient(circle at 34% 0%, rgba(241,199,33,.14), transparent 40%),
+    rgba(17,16,14,.94);
+  box-shadow:0 20px 54px rgba(0,0,0,.55);
+  backdrop-filter:blur(18px) saturate(1.1);
+  -webkit-backdrop-filter:blur(18px) saturate(1.1);
+  opacity:0; visibility:hidden; transform:translateY(-8px); pointer-events:none;
+  transition:opacity .22s ease, transform .22s ease, visibility 0s linear .22s;
+}}
+.nav.is-open .nav-menu{{ opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto; transition:opacity .22s ease, transform .22s ease; }}
+.nav-menu{{ max-height:min(70vh, 560px); overflow-y:auto; }}
+
+.nav-cat + .nav-cat{{ margin-top:2px; }}
+.nav-cat-row{{
+  display:flex; align-items:stretch; gap:6px;
+  border:1px solid rgba(241,199,33,.12); border-radius:12px; background:rgba(0,0,0,.18);
+  overflow:hidden;
+}}
+.nav-cat-link{{
+  flex:1; display:flex; align-items:center; color:rgba(255,255,255,.86); text-decoration:none;
+  font-size:14px; font-weight:800; letter-spacing:.01em; padding:13px 16px;
+  transition:color .2s ease, background .2s ease;
+}}
+.nav-cat-link:hover{{ color:var(--yellow); background:rgba(241,199,33,.08); }}
+.nav-cat-toggle{{
+  flex:none; width:44px; display:flex; align-items:center; justify-content:center;
+  background:transparent; border:none; border-left:1px solid rgba(241,199,33,.12);
+  color:rgba(255,255,255,.6); cursor:pointer;
+}}
+.nav-cat-toggle svg{{ transition:transform .22s ease; }}
+.nav-cat-toggle:hover{{ color:var(--yellow); background:rgba(241,199,33,.08); }}
+.nav-cat.is-open .nav-cat-toggle svg{{ transform:rotate(180deg); }}
+
+.nav-sub{{
+  list-style:none; margin:0; padding:0 0 0 12px;
+  max-height:0; overflow:hidden;
+  transition:max-height .28s ease;
+}}
+.nav-cat.is-open .nav-sub{{ max-height:600px; }}
+.nav-sub li{{ padding:6px 0 0; }}
+.nav-sub li:first-child{{ padding-top:8px; }}
+.nav-sub a{{
+  display:block; color:rgba(255,255,255,.62); text-decoration:none; font-size:12.5px; font-weight:700;
+  padding:10px 14px; border-radius:10px; border:1px solid rgba(255,255,255,.06); background:rgba(255,255,255,.02);
+  border-left:2px solid rgba(241,199,33,.3);
+  transition:color .2s ease, background .2s ease, border-color .2s ease;
+}}
+.nav-sub a:hover{{ color:var(--yellow); background:rgba(241,199,33,.08); border-left-color:var(--yellow); }}
+@media (max-width:720px){{ .nav{{ left:10px; right:10px; top:10px; }} }}
 
 /* ---------- HERO ---------- */
 .hero{{
-  background:var(--ink);
-  color:var(--paper);
-  padding:76px 0 96px;
+  background:var(--bg);
+  color:var(--text);
+  padding:clamp(130px,15vw,164px) 0 100px;
   position:relative;
   overflow:hidden;
 }}
-.hero::before{{
-  content:"";
-  position:absolute; right:-140px; top:-160px; width:520px; height:520px; z-index:0;
-  background:radial-gradient(circle, var(--yellow) 0%, transparent 68%);
-  opacity:.30; pointer-events:none;
-  animation: heroDrift1 17s ease-in-out infinite;
+/* ── flame orb: halo ambiental que respira solo ── */
+.flame-orb{{
+  position:absolute; z-index:0; pointer-events:none;
+  width:560px; height:560px; top:38%; left:50%;
+  margin-left:-280px; margin-top:-280px;
+  border-radius:50%; opacity:.55;
+  background:radial-gradient(circle at 45% 40%, var(--yellow) 0%, var(--red) 45%, #3D0000 75%, transparent 100%);
+  filter:blur(80px);
+  animation: flameBreath 4.2s ease-in-out infinite;
 }}
-.hero::after{{
-  content:"";
-  position:absolute; left:-120px; bottom:-200px; width:420px; height:420px; z-index:0;
-  background:radial-gradient(circle, var(--red) 0%, transparent 70%);
-  opacity:.22; pointer-events:none;
-  animation: heroDrift2 21s ease-in-out infinite;
+@keyframes flameBreath{{
+  0%,100%{{ transform:scale(1); }}
+  50%{{ transform:scale(1.12); }}
 }}
 .hero-glow{{
   position:absolute; z-index:0; width:640px; height:640px; border-radius:50%;
   left:var(--mx, 50%); top:var(--my, 32%); transform:translate(-50%,-50%);
-  background:radial-gradient(circle, rgba(241,199,33,0.32) 0%, rgba(219,0,0,0.10) 45%, transparent 72%);
+  background:radial-gradient(circle, rgba(241,199,33,0.28) 0%, rgba(219,0,0,0.10) 45%, transparent 72%);
   filter:blur(6px); opacity:0; transition:opacity .5s ease; pointer-events:none;
 }}
 .hero:hover .hero-glow{{ opacity:1; }}
-
-@keyframes heroDrift1{{
-  0%,100%{{ transform:translate(0,0) scale(1); }}
-  50%{{ transform:translate(-46px,34px) scale(1.09); }}
-}}
-@keyframes heroDrift2{{
-  0%,100%{{ transform:translate(0,0) scale(1); }}
-  50%{{ transform:translate(38px,-42px) scale(1.12); }}
-}}
 @media (prefers-reduced-motion: reduce){{
-  .hero::before, .hero::after{{ animation:none; }}
+  .flame-orb{{ animation:none; }}
   .hero-glow{{ transition:none; opacity:0 !important; }}
 }}
 .hero-inner{{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; text-align:center; }}
@@ -158,11 +224,12 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; }}
   font-family:var(--font-body); font-weight:700; font-size:12px; letter-spacing:.09em;
   text-transform:uppercase; color:var(--yellow); margin:0 0 18px; padding:6px 14px 6px 8px;
   border:1px solid rgba(241,199,33,0.35); border-radius:var(--radius-pill);
+  background:rgba(241,199,33,.06);
 }}
 .hero-eyebrow .brand-icon{{ width:18px; height:18px; }}
-.hero-copy h1{{ font-size:clamp(34px,4.6vw,54px); line-height:1.06; margin:0 0 20px; letter-spacing:-1px; }}
+.hero-copy h1{{ font-family:var(--font-display); font-weight:800; font-size:clamp(36px,5vw,58px); line-height:1.04; margin:0 0 20px; letter-spacing:-1.5px; color:var(--text); }}
 .hero-copy h1 em{{ font-style:normal; color:var(--yellow); }}
-.hero-copy p{{ color:var(--ink-10); font-size:17.5px; max-width:560px; margin:0 0 32px; opacity:.9; }}
+.hero-copy p{{ color:var(--text-dim); font-size:17.5px; max-width:560px; margin:0 0 32px; }}
 .hero-actions{{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }}
 .btn{{
   font-family:var(--font-body); font-weight:700; font-size:14.5px;
@@ -177,68 +244,81 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; }}
 .btn-outline:hover{{ background:rgba(250,250,250,0.1); border-color:var(--paper); }}
 
 @media (max-width:720px){{
-  .hero{{ padding:56px 0 64px; }}
+  .hero{{ padding:118px 0 64px; }}
 }}
 
 /* ---------- TOOLBAR: BUSCADOR + ASISTENTE ---------- */
 .toolbar{{
-  background:var(--white); border-bottom:1px solid var(--ink-10);
-  padding:26px 0; position:relative; z-index:20;
+  position:sticky; top:96px; z-index:90;
+  padding:14px 0; transition:top .2s ease;
 }}
-.toolbar-inner{{ display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap; }}
+.toolbar-wrap{{ position:relative; }}
+.toolbar-inner{{
+  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+  background:rgba(18,17,15,.78);
+  border:1px solid var(--line-amber);
+  border-radius:20px;
+  padding:9px 10px;
+  backdrop-filter:blur(18px) saturate(1.15);
+  -webkit-backdrop-filter:blur(18px) saturate(1.15);
+  box-shadow:0 18px 44px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03) inset;
+}}
 .search-box{{
-  flex:1 1 340px; position:relative; display:flex; align-items:center;
-  background:var(--paper-50); border:1.5px solid var(--ink-10); border-radius:var(--radius-pill);
-  padding:0 6px 0 18px; transition:border-color .15s, box-shadow .15s;
+  flex:1 1 260px; position:relative; display:flex; align-items:center;
+  background:transparent; border:none; border-radius:14px;
+  padding:0 6px 0 12px; transition:background .15s;
 }}
-.search-box:focus-within{{ border-color:var(--yellow); box-shadow:0 0 0 4px rgba(241,199,33,.22); background:var(--white); }}
-.search-box svg{{ flex:none; color:var(--ink-30); }}
+.search-box:focus-within{{ background:rgba(255,255,255,.05); }}
+.search-box svg{{ flex:none; color:var(--text-faint); }}
 .search-box input{{
   flex:1; border:none; background:transparent; outline:none;
-  font-family:var(--font-body); font-size:14.5px; color:var(--ink); padding:13px 10px;
+  font-family:var(--font-body); font-size:14.5px; color:var(--text); padding:12px 10px;
 }}
-.search-box input::placeholder{{ color:var(--ink-30); }}
+.search-box input::placeholder{{ color:var(--text-faint); }}
 .search-clear{{
-  flex:none; display:none; align-items:center; justify-content:center; width:28px; height:28px;
-  border:none; border-radius:50%; background:var(--ink-10); color:var(--ink-50); cursor:pointer; font-size:13px;
+  flex:none; display:none; align-items:center; justify-content:center; width:26px; height:26px;
+  border:none; border-radius:50%; background:rgba(255,255,255,.08); color:var(--text-dim); cursor:pointer; font-size:12px;
 }}
-.search-clear:hover{{ background:var(--ink-20); }}
-.search-count{{ font-size:11.5px; color:var(--ink-30); font-weight:600; padding:0 12px 0 2px; white-space:nowrap; }}
+.search-clear:hover{{ background:rgba(255,255,255,.14); }}
+.search-count{{ font-size:11.5px; color:var(--text-faint); font-weight:600; padding:0 10px 0 2px; white-space:nowrap; }}
 
 .assistant-toggle{{
-  flex:0 0 auto; display:inline-flex; align-items:center; gap:10px;
-  background:var(--ink); color:var(--paper); border:none; border-radius:var(--radius-pill);
-  padding:10px 20px 10px 10px; cursor:pointer; font-family:var(--font-body); font-weight:700; font-size:14px;
-  transition:transform .12s ease, box-shadow .12s ease;
+  flex:0 0 auto; display:inline-flex; align-items:center; gap:9px;
+  background:var(--yellow); color:var(--ink); border:none; border-radius:15px;
+  padding:9px 18px 9px 9px; cursor:pointer; font-family:var(--font-body); font-weight:800; font-size:13.5px;
+  transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
 }}
-.assistant-toggle:hover{{ box-shadow:0 8px 20px rgba(2,2,1,.24); transform:translateY(-1px); }}
-.assistant-toggle .brand-icon{{ width:30px; height:30px; border-radius:50%; background:var(--yellow); padding:3px; box-sizing:border-box; }}
-.assistant-toggle .at-dot{{ width:7px; height:7px; border-radius:50%; background:#3FCB6B; box-shadow:0 0 0 3px rgba(63,203,107,.25); }}
+.assistant-toggle:hover{{ box-shadow:0 8px 22px rgba(241,199,33,.4); transform:translateY(-1px); background:var(--yellow-50); }}
+.assistant-toggle .brand-icon{{ width:26px; height:26px; }}
+.assistant-toggle .at-dot{{ width:7px; height:7px; border-radius:50%; background:#1E8A44; box-shadow:0 0 0 3px rgba(30,138,68,.25); }}
 
-.no-results{{ display:none; text-align:center; padding:60px 20px; color:var(--ink-40); }}
+@media (max-width:720px){{ .toolbar{{ top:84px; }} }}
+
+.no-results{{ display:none; text-align:center; padding:60px 20px; color:var(--text-dim); }}
 .no-results .brand-icon{{ width:64px; height:64px; margin:0 auto 14px; opacity:.7; }}
-.no-results h3{{ font-size:19px; margin-bottom:6px; color:var(--ink); }}
+.no-results h3{{ font-size:19px; margin-bottom:6px; color:var(--text); }}
 .no-results p{{ font-size:14px; margin:0; }}
 .is-hidden{{ display:none !important; }}
 
-/* Chat panel */
+/* Chat panel: overlay flotante, no empuja el resto de la página */
 .chat-panel{{
-  max-height:0; overflow:hidden; opacity:0;
-  transition:max-height .32s ease, opacity .25s ease, margin .3s ease;
-  margin-top:0;
+  position:absolute; top:100%; left:0; right:0; margin-top:10px;
+  max-height:0; overflow:hidden; opacity:0; visibility:hidden;
+  transition:max-height .32s ease, opacity .25s ease, visibility 0s linear .32s;
+  z-index:95;
 }}
-.chat-panel.is-open{{ max-height:640px; opacity:1; margin-top:16px; }}
+.chat-panel.is-open{{ max-height:640px; opacity:1; visibility:visible; transition:max-height .32s ease, opacity .25s ease; }}
 .chat-shell{{
-  background:var(--ink); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-lg);
+  background:var(--bg); border:1px solid var(--line-amber); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-lg);
   display:flex; flex-direction:column; max-width:640px;
 }}
-.chat-head{{ display:flex; align-items:center; gap:10px; padding:16px 18px; border-bottom:1px solid rgba(250,250,250,.1); }}
+.chat-head{{ display:flex; align-items:center; gap:10px; padding:16px 18px; border-bottom:1px solid var(--line); }}
 .chat-head .brand-icon{{ width:32px; height:32px; }}
-.chat-head b{{ display:block; font-family:var(--font-display); font-size:14px; color:var(--paper); }}
-.chat-head small{{ color:var(--ink-10); opacity:.65; font-size:11.5px; }}
-.chat-close{{ margin-left:auto; background:none; border:none; color:var(--ink-10); opacity:.7; cursor:pointer; font-size:18px; line-height:1; padding:4px; }}
+.chat-head b{{ display:block; font-family:var(--font-display); font-size:14px; color:var(--text); }}
+.chat-head small{{ color:var(--text-faint); font-size:11.5px; }}
+.chat-close{{ margin-left:auto; background:none; border:none; color:var(--text-dim); opacity:.7; cursor:pointer; font-size:18px; line-height:1; padding:4px; }}
 .chat-close:hover{{ opacity:1; }}
-.chat-body{{ padding:18px; display:flex; flex-direction:column; gap:12px; max-height:340px; overflow-y:auto; background:#141412; }}
+.chat-body{{ padding:18px; display:flex; flex-direction:column; gap:12px; max-height:340px; overflow-y:auto; background:var(--bg-alt); }}
 .chat-msg{{ display:flex; gap:10px; max-width:88%; }}
 .chat-msg.user{{ align-self:flex-end; flex-direction:row-reverse; }}
 .chat-msg .bubble{{
@@ -246,7 +326,7 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; }}
   font-size:13.5px; line-height:1.5;
 }}
 .chat-msg.user .bubble{{ background:var(--yellow); border-radius:14px 14px 4px 14px; font-weight:600; }}
-.chat-msg .avatar{{ width:26px; height:26px; flex:none; border-radius:50%; background:var(--yellow); padding:4px; box-sizing:border-box; }}
+.chat-msg .avatar{{ width:26px; height:26px; flex:none; border-radius:50%; background-color:var(--yellow); padding:4px; box-sizing:border-box; }}
 .chat-suggest{{ display:flex; flex-direction:column; gap:6px; margin-top:8px; }}
 .chat-suggest a{{
   display:flex; align-items:center; justify-content:space-between; gap:8px;
@@ -257,11 +337,11 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; }}
 .chat-suggest a span.tag{{ font-weight:600; color:var(--ink-30); font-size:11px; }}
 .chat-chips{{ display:flex; gap:8px; flex-wrap:wrap; padding:0 18px 14px; }}
 .chat-chip{{
-  background:rgba(250,250,250,.08); border:1px solid rgba(250,250,250,.16); color:var(--ink-10);
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); color:var(--text-dim);
   font-size:12px; font-weight:600; padding:7px 13px; border-radius:var(--radius-pill); cursor:pointer;
 }}
 .chat-chip:hover{{ background:rgba(241,199,33,.16); border-color:var(--yellow); color:var(--yellow); }}
-.chat-input-row{{ display:flex; gap:8px; padding:14px 18px; border-top:1px solid rgba(250,250,250,.1); }}
+.chat-input-row{{ display:flex; gap:8px; padding:14px 18px; border-top:1px solid var(--line); }}
 .chat-input-row input{{
   flex:1; background:rgba(250,250,250,.07); border:1px solid rgba(250,250,250,.15); border-radius:var(--radius-pill);
   padding:11px 16px; color:var(--paper); font-family:var(--font-body); font-size:13.5px; outline:none;
@@ -282,91 +362,92 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; }}
 }}
 
 /* ---------- CATEGORY SECTIONS ---------- */
-.cat-section{{ padding:72px 0; border-bottom:1px solid var(--ink-10); }}
+.cat-section{{ padding:72px 0; border-bottom:1px solid var(--line); scroll-margin-top:200px; }}
+.cat-section:nth-of-type(even){{ background:var(--bg-alt); }}
 .cat-section:last-of-type{{ border-bottom:none; }}
 .cat-head{{ max-width:680px; margin-bottom:34px; }}
 .cat-eyebrow{{
   font-family:var(--font-body); font-weight:700; font-size:12px; letter-spacing:.08em;
-  text-transform:uppercase; color:var(--red); margin:0 0 10px; display:flex; align-items:center; gap:8px;
+  text-transform:uppercase; color:var(--yellow); margin:0 0 10px; display:flex; align-items:center; gap:8px;
 }}
-.cat-eyebrow .dot{{ width:7px; height:7px; border-radius:50%; background:var(--red); }}
-.cat-head h2{{ font-size:clamp(28px,3.4vw,38px); margin:0 0 12px; letter-spacing:-.6px; }}
-.cat-head p{{ color:var(--ink-40); font-size:15.5px; margin:0; }}
+.cat-eyebrow .dot{{ width:7px; height:7px; border-radius:50%; background:var(--yellow); box-shadow:0 0 8px rgba(241,199,33,.6); }}
+.cat-head h2{{ font-family:var(--font-display); font-weight:800; font-size:clamp(28px,3.4vw,38px); margin:0 0 12px; letter-spacing:-.8px; color:var(--text); }}
+.cat-head p{{ color:var(--text-dim); font-size:15.5px; margin:0; }}
 
 .level-nav{{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:44px; }}
 .level-pill{{
   --nivel-accent: var(--yellow);
   display:inline-flex; align-items:center; gap:8px;
-  background:var(--white); border:1.5px solid var(--ink-10); text-decoration:none; color:var(--ink);
+  background:var(--surface); border:1.5px solid var(--line); text-decoration:none; color:var(--text);
   font-family:var(--font-body); font-weight:700; font-size:13.5px;
   padding:10px 18px; border-radius:var(--radius-pill); transition:.15s;
 }}
-.level-pill:hover{{ border-color:var(--nivel-accent); box-shadow:0 4px 14px rgba(2,2,1,0.08); transform:translateY(-1px); }}
-.level-pill span{{ background:var(--nivel-accent); color:var(--white); font-size:11.5px; padding:2px 8px; border-radius:var(--radius-pill); }}
+.level-pill:hover{{ border-color:var(--nivel-accent); box-shadow:0 4px 18px rgba(0,0,0,.35); transform:translateY(-1px); }}
+.level-pill span{{ background:var(--nivel-accent); color:var(--ink); font-size:11.5px; padding:2px 8px; border-radius:var(--radius-pill); font-weight:800; }}
 
-.nivel-block{{ margin-bottom:8px; }}
+.nivel-block{{ margin-bottom:8px; scroll-margin-top:200px; }}
 .nivel-head{{ display:flex; align-items:center; gap:14px; margin:0 0 26px; }}
 .nivel-chip{{
   --nivel-accent: var(--yellow);
   font-family:var(--font-display); font-weight:700; font-size:17px;
-  color:var(--ink); display:flex; align-items:center; gap:8px;
+  color:var(--text); display:flex; align-items:center; gap:8px;
   padding-bottom:4px; border-bottom:3px solid var(--nivel-accent);
 }}
-.nivel-line{{ flex:1; height:1px; background:var(--ink-10); }}
-.nivel-total{{ font-size:12.5px; color:var(--ink-30); font-weight:600; white-space:nowrap; }}
+.nivel-line{{ flex:1; height:1px; background:var(--line); }}
+.nivel-total{{ font-size:12.5px; color:var(--text-faint); font-weight:600; white-space:nowrap; }}
 
-.module-group{{ margin-bottom:40px; }}
+.module-group{{ margin-bottom:40px; scroll-margin-top:200px; }}
 .module-head{{ display:flex; align-items:baseline; gap:12px; margin-bottom:16px; flex-wrap:wrap; }}
 .module-tag{{
   font-family:var(--font-display); font-weight:800; font-size:12px;
-  background:var(--ink); color:var(--yellow); padding:4px 10px; border-radius:7px; letter-spacing:.02em;
+  background:var(--yellow); color:var(--ink); padding:4px 10px; border-radius:7px; letter-spacing:.02em;
 }}
 .module-tag--otros{{ background:var(--red); color:var(--white); }}
-.module-name{{ font-size:18px; font-weight:700; letter-spacing:-.2px; }}
-.module-count{{ font-size:12px; color:var(--ink-30); font-weight:600; margin-left:auto; }}
+.module-name{{ font-size:18px; font-weight:700; letter-spacing:-.2px; color:var(--text); }}
+.module-count{{ font-size:12px; color:var(--text-faint); font-weight:600; margin-left:auto; }}
 
 /* ---------- CARDS ---------- */
 .card-grid{{ display:grid; grid-template-columns:repeat(auto-fill,minmax(272px,1fr)); gap:16px; }}
 .class-card{{
   --nivel-accent: var(--yellow);
-  display:block; text-decoration:none; color:var(--ink);
-  background:var(--white); border:1px solid var(--ink-10); border-top:4px solid var(--nivel-accent);
+  display:block; text-decoration:none; color:var(--text);
+  background:var(--surface); border:1px solid var(--line); border-top:4px solid var(--nivel-accent);
   border-radius:var(--radius-md); padding:20px 20px 18px;
   box-shadow:var(--shadow-sm);
-  transition:box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+  transition:box-shadow .18s ease, transform .18s ease, border-color .18s ease, background .18s ease;
   position:relative;
 }}
-.class-card:hover{{ box-shadow:var(--shadow-md); transform:translateY(-3px); }}
-.class-card--soon{{ cursor:default; opacity:.72; }}
-.class-card--soon:hover{{ transform:none; box-shadow:var(--shadow-sm); }}
+.class-card:hover{{ box-shadow:var(--shadow-md), 0 0 0 1px var(--nivel-accent) inset; border-color:var(--nivel-accent); background:var(--surface-strong); transform:translateY(-3px); }}
+.class-card--soon{{ cursor:default; opacity:.55; }}
+.class-card--soon:hover{{ transform:none; box-shadow:var(--shadow-sm); border-color:var(--line); background:var(--surface); }}
 .cc-top{{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }}
-.cc-num{{ font-family:var(--font-display); font-weight:700; font-size:11.5px; color:var(--ink-30); letter-spacing:.03em; }}
+.cc-num{{ font-family:var(--font-display); font-weight:700; font-size:11.5px; color:var(--text-faint); letter-spacing:.03em; }}
 .badge{{
   display:inline-flex; align-items:center; gap:5px;
   font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:var(--radius-pill);
   font-family:var(--font-body); white-space:nowrap;
 }}
 .badge-dot{{ width:5px; height:5px; border-radius:50%; }}
-.badge-yellow{{ background:var(--yellow-10); color:#7A5E00; }}
+.badge-yellow{{ background:rgba(241,199,33,.14); color:var(--yellow); }}
 .badge-yellow .badge-dot{{ background:var(--yellow); }}
-.badge-red{{ background:var(--red-10); color:#8A0000; }}
+.badge-red{{ background:rgba(219,0,0,.18); color:#FF8A8A; }}
 .badge-red .badge-dot{{ background:var(--red); }}
-.badge-ink{{ background:var(--ink-10); color:var(--ink-50); }}
-.badge-ink .badge-dot{{ background:var(--ink-50); }}
-.cc-title{{ font-family:var(--font-display); font-size:15.5px; font-weight:700; line-height:1.32; margin:0 0 8px; letter-spacing:-.1px; }}
-.cc-desc{{ font-size:13px; color:var(--ink-40); margin:0 0 16px; line-height:1.5; }}
+.badge-ink{{ background:rgba(167,139,250,.16); color:var(--violet); }}
+.badge-ink .badge-dot{{ background:var(--violet); }}
+.cc-title{{ font-family:var(--font-display); font-size:15.5px; font-weight:700; line-height:1.32; margin:0 0 8px; letter-spacing:-.1px; color:var(--text); }}
+.cc-desc{{ font-size:13px; color:var(--text-dim); margin:0 0 16px; line-height:1.5; }}
 .cc-foot{{ display:flex; align-items:center; }}
-.cc-play{{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--red); }}
+.cc-play{{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--yellow); }}
 .class-card:hover .cc-play{{ text-decoration:underline; }}
-.cc-soon{{ font-size:12px; font-weight:700; color:var(--ink-30); text-transform:uppercase; letter-spacing:.04em; }}
+.cc-soon{{ font-size:12px; font-weight:700; color:var(--text-faint); text-transform:uppercase; letter-spacing:.04em; }}
 
 /* ---------- FOOTER ---------- */
-.site-footer{{ background:var(--ink); color:var(--ink-10); padding:44px 0; }}
+.site-footer{{ background:var(--bg-alt); color:var(--text-dim); padding:44px 0; border-top:1px solid var(--line); }}
 .footer-inner{{ display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }}
 .footer-brand{{ display:flex; align-items:center; gap:10px; }}
 .footer-brand .brand-icon{{ width:24px; height:24px; }}
-.footer-brand span{{ font-family:var(--font-display); font-weight:700; font-size:14px; color:var(--paper); }}
-.site-footer p{{ margin:0; font-size:12.5px; opacity:.65; }}
+.footer-brand span{{ font-family:var(--font-display); font-weight:700; font-size:14px; color:var(--text); }}
+.site-footer p{{ margin:0; font-size:12.5px; opacity:.75; }}
 
 @media (max-width:640px){{
   .wrap{{ padding:0 20px; }}
@@ -376,19 +457,23 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; }}
 </head>
 <body>
 
-<nav class="nav">
+<nav class="nav" id="siteNav">
   <div class="nav-inner">
     <a class="nav-brand" href="#top">
       <span class="brand-icon" role="img" aria-label="Llamaleads"></span>
       <div><span>LlamaLeads Academy</span><small>Capacitación CRM Llamaleads</small></div>
     </a>
-    <ul class="nav-links">
-      {NAV_HTML}
-    </ul>
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="navMenu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+  <ul class="nav-menu" id="navMenu">
+    {NAV_HTML}
+  </ul>
 </nav>
 
 <header class="hero" id="top">
+  <div class="flame-orb"></div>
   <div class="hero-glow" id="heroGlow"></div>
   <div class="wrap hero-inner">
     <div class="hero-copy">
@@ -404,11 +489,11 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; }}
 </header>
 
 <section class="toolbar" id="toolbar">
-  <div class="wrap">
+  <div class="wrap toolbar-wrap">
     <div class="toolbar-inner">
       <div class="search-box">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.6"/><path d="M11.5 11.5L15 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-        <input type="text" id="searchInput" placeholder="Buscar una clase: pipelines, WhatsApp, contactos, tags…" autocomplete="off">
+        <input type="text" id="searchInput" placeholder="¿Qué quieres aprender?" autocomplete="off">
         <span class="search-count" id="searchCount"></span>
         <button class="search-clear" id="searchClear" type="button" aria-label="Limpiar búsqueda">✕</button>
       </div>
@@ -473,6 +558,49 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; }}
 
 <script>
 const COURSES = {COURSES_JSON};
+
+/* ---------------- Menú hamburguesa del navbar ---------------- */
+(function() {{
+  const nav = document.getElementById('siteNav');
+  const toggle = document.getElementById('navToggle');
+  const menu = document.getElementById('navMenu');
+  if (!nav || !toggle || !menu) return;
+
+  function setOpen(open) {{
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+  }}
+
+  toggle.addEventListener('click', (e) => {{
+    e.stopPropagation();
+    setOpen(!nav.classList.contains('is-open'));
+  }});
+
+  menu.querySelectorAll('a').forEach(a => {{
+    a.addEventListener('click', () => setOpen(false));
+  }});
+
+  document.addEventListener('click', (e) => {{
+    if (!nav.contains(e.target)) setOpen(false);
+  }});
+
+  document.addEventListener('keydown', (e) => {{
+    if (e.key === 'Escape') setOpen(false);
+  }});
+
+  /* Acordeón por categoría: cada botón despliega solo sus módulos */
+  menu.querySelectorAll('.nav-cat').forEach(cat => {{
+    const catToggle = cat.querySelector('.nav-cat-toggle');
+    if (!catToggle) return;
+    catToggle.addEventListener('click', (e) => {{
+      e.stopPropagation();
+      const willOpen = !cat.classList.contains('is-open');
+      cat.classList.toggle('is-open', willOpen);
+      catToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    }});
+  }});
+}})();
 
 /* ---------------- Glow interactivo del hero ---------------- */
 (function() {{

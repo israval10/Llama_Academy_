@@ -39,7 +39,7 @@ with open(DATA_DIR / "rows.json", encoding="utf-8") as f:
 NIVEL_META = {
     "inicial":    {"label": "Inicial",    "emoji": "🟢", "badge": "badge-yellow", "accent": "var(--yellow)"},
     "intermedio": {"label": "Intermedio", "emoji": "🔵", "badge": "badge-red",    "accent": "var(--red)"},
-    "avanzado":   {"label": "Avanzado",   "emoji": "🟣", "badge": "badge-ink",    "accent": "var(--ink)"},
+    "avanzado":   {"label": "Avanzado",   "emoji": "🟣", "badge": "badge-ink",    "accent": "var(--violet)"},
 }
 NIVEL_ORDER = ["inicial", "intermedio", "avanzado"]
 
@@ -157,11 +157,16 @@ def module_tag_and_name(modulo):
     return "＋", modulo
 
 
-def module_group_html(modulo, rows_subset, tag_class=""):
+def module_anchor(categoria, modulo):
+    return f"modulo-{slugify(categoria)}-{slugify(modulo)}"
+
+
+def module_group_html(modulo, rows_subset, tag_class="", anchor_id=None):
     mod_num, mod_name = module_tag_and_name(modulo)
     cards = "\n".join(card_html(r) for r in rows_subset)
     n = len(rows_subset)
-    return f'''<div class="module-group">
+    id_attr = f' id="{anchor_id}"' if anchor_id else ""
+    return f'''<div class="module-group"{id_attr}>
         <div class="module-head">
             <span class="module-tag {tag_class}">{esc(mod_num)}</span>
             <h3 class="module-name">{esc(mod_name)}</h3>
@@ -173,10 +178,13 @@ def module_group_html(modulo, rows_subset, tag_class=""):
     </div>'''
 
 
-def nivel_block_html(nivel, rows_subset):
+def nivel_block_html(nivel, rows_subset, categoria):
     meta = NIVEL_META[nivel]
     modules = group_by_modulo(rows_subset)
-    groups_html = "\n".join(module_group_html(m, rs) for m, rs in modules.items())
+    groups_html = "\n".join(
+        module_group_html(m, rs, anchor_id=module_anchor(categoria, m))
+        for m, rs in modules.items()
+    )
     return f'''<div class="nivel-block" id="nivel-{nivel}">
         <div class="nivel-head">
             <span class="nivel-chip" style="--nivel-accent:{meta['accent']}">{meta['emoji']} Nivel {meta['label']}</span>
@@ -198,15 +206,36 @@ def category_body_html(categoria, rows_subset):
             for n in niveles_presentes
         )
         body = "\n".join(
-            nivel_block_html(n, [r for r in rows_subset if r["nivel"] == n])
+            nivel_block_html(n, [r for r in rows_subset if r["nivel"] == n], categoria)
             for n in niveles_presentes
         )
         return pills, body
     else:
         modules = group_by_modulo(rows_subset)
         tag_class = "module-tag--otros"
-        body = "\n".join(module_group_html(m, rs, tag_class) for m, rs in modules.items())
+        body = "\n".join(
+            module_group_html(m, rs, tag_class, anchor_id=module_anchor(categoria, m))
+            for m, rs in modules.items()
+        )
         return "", body
+
+
+def category_modules_ordered(categoria, rows_subset):
+    """Lista de nombres de módulo en el orden en que se renderizan para esta categoría."""
+    if categoria in CATEGORIES_WITH_NIVEL_SPLIT:
+        niveles_presentes = [n for n in NIVEL_ORDER if any(r["nivel"] == n for r in rows_subset)]
+        seen = []
+        for n in niveles_presentes:
+            for r in rows_subset:
+                if r["nivel"] == n and r["modulo"] not in seen:
+                    seen.append(r["modulo"])
+        return seen
+    else:
+        seen = []
+        for r in rows_subset:
+            if r["modulo"] not in seen:
+                seen.append(r["modulo"])
+        return seen
 
 
 CATEGORY_COPY = {
@@ -236,9 +265,31 @@ def category_section_html(categoria):
 
 sections_html = "\n".join(category_section_html(c) for c in categorias_ordenadas)
 
-nav_links_html = "\n".join(
-    f'<li><a href="#{slugify(c)}">{esc(c)}</a></li>' for c in categorias_ordenadas
-)
+def nav_menu_html():
+    items = []
+    for c in categorias_ordenadas:
+        rows_subset = [r for r in rows if r["categoria"] == c]
+        cat_anchor = slugify(c)
+        modulos = category_modules_ordered(c, rows_subset)
+        sub_items = "\n".join(
+            f'<li><a href="#{module_anchor(c, m)}">{esc(" · ".join(module_tag_and_name(m)))}</a></li>'
+            for m in modulos
+        )
+        items.append(f'''<li class="nav-cat">
+      <div class="nav-cat-row">
+        <a href="#{cat_anchor}" class="nav-cat-link">{esc(c)}</a>
+        <button class="nav-cat-toggle" type="button" aria-expanded="false" aria-label="Mostrar módulos de {esc(c)}">
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <ul class="nav-sub">
+        {sub_items}
+      </ul>
+    </li>''')
+    return "\n".join(items)
+
+
+nav_links_html = nav_menu_html()
 
 total_clases = len(rows)
 total_modulos = len({r["modulo"] for r in rows})

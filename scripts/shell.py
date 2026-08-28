@@ -282,6 +282,36 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; color:var(--text); }}
 .search-clear:hover{{ background:rgba(255,255,255,.14); }}
 .search-count{{ font-size:11.5px; color:var(--text-faint); font-weight:600; padding:0 10px 0 2px; white-space:nowrap; }}
 
+/* Sugerencias de búsqueda (antes y mientras escribe) */
+.search-suggest{{
+  position:absolute; top:calc(100% + 8px); left:0; right:0; z-index:80;
+  background:rgba(18,17,15,.95); border:1px solid var(--line-amber); border-radius:16px;
+  padding:10px; max-height:380px; overflow-y:auto;
+  box-shadow:0 20px 48px rgba(0,0,0,.5);
+  backdrop-filter:blur(18px) saturate(1.1); -webkit-backdrop-filter:blur(18px) saturate(1.1);
+  opacity:0; visibility:hidden; transform:translateY(-6px); pointer-events:none;
+  transition:opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
+}}
+.search-suggest.is-open{{ opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto; transition:opacity .18s ease, transform .18s ease; }}
+.suggest-label{{ font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:var(--text-faint); padding:6px 8px 10px; }}
+.suggest-chips{{ display:flex; flex-wrap:wrap; gap:8px; padding:0 6px 4px; }}
+.suggest-chip{{
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); color:rgba(255,255,255,.78);
+  font-size:12.5px; font-weight:700; padding:8px 14px; border-radius:999px; cursor:pointer;
+  transition:color .18s ease, border-color .18s ease, background .18s ease;
+}}
+.suggest-chip:hover{{ background:rgba(241,199,33,.14); border-color:var(--yellow); color:var(--yellow); }}
+.suggest-list{{ display:flex; flex-direction:column; gap:3px; }}
+.suggest-item{{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:11px 12px; border-radius:11px; text-decoration:none; color:var(--text);
+  transition:background .15s ease;
+}}
+.suggest-item:hover{{ background:rgba(241,199,33,.08); }}
+.suggest-item b{{ font-weight:700; font-size:13.5px; line-height:1.3; }}
+.suggest-item .tag{{ flex:none; font-size:10.5px; color:var(--text-faint); font-weight:700; white-space:nowrap; padding:3px 9px; border-radius:999px; background:rgba(255,255,255,.06); }}
+.suggest-empty{{ padding:18px 10px; text-align:center; color:var(--text-faint); font-size:13px; }}
+
 .assistant-toggle{{
   flex:0 0 auto; display:inline-flex; align-items:center; gap:9px;
   background:var(--yellow); color:var(--ink); border:none; border-radius:15px;
@@ -527,6 +557,7 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; color:var(--text); }}
         <input type="text" id="searchInput" placeholder="¿Qué quieres aprender?" autocomplete="off">
         <span class="search-count" id="searchCount"></span>
         <button class="search-clear" id="searchClear" type="button" aria-label="Limpiar búsqueda">✕</button>
+        <div class="search-suggest" id="searchSuggest"></div>
       </div>
       <button class="assistant-toggle" id="assistantToggle" type="button">
         <span class="brand-icon" role="img" aria-label=""></span>
@@ -766,6 +797,97 @@ const COURSES = {COURSES_JSON};
     input.value = '';
     runSearch();
     input.focus();
+  }});
+
+  /* ---- Sugerencias: chips (vacío) + resultados en vivo (escribiendo) ---- */
+  const suggestBox = document.getElementById('searchSuggest');
+
+  function escapeHtml(s) {{
+    const d = document.createElement('div');
+    d.textContent = s == null ? '' : s;
+    return d.innerHTML;
+  }}
+
+  function moduleLabel(m) {{
+    if (!m) return '';
+    if (m.includes('·')) return m.split('·')[1].trim();
+    if (m.startsWith('M_')) return m.slice(2).trim();
+    return m;
+  }}
+
+  const MODULES = [];
+  const seenMods = new Set();
+  COURSES.forEach(c => {{
+    const label = moduleLabel(c.modulo);
+    if (label && !seenMods.has(label)) {{ seenMods.add(label); MODULES.push(label); }}
+  }});
+
+  function norm(s) {{ return (s || '').toLowerCase(); }}
+
+  function searchCourses(q) {{
+    const terms = norm(q).split(/\\s+/).filter(Boolean);
+    if (!terms.length) return [];
+    const matched = COURSES.filter(c => {{
+      const blob = norm(c.titulo + ' ' + c.desc + ' ' + c.modulo);
+      return terms.every(t => blob.includes(t));
+    }});
+    matched.sort((a, b) => {{
+      const aHit = norm(a.titulo).includes(norm(q)) ? 0 : 1;
+      const bHit = norm(b.titulo).includes(norm(q)) ? 0 : 1;
+      return aHit - bHit;
+    }});
+    return matched.slice(0, 6);
+  }}
+
+  function renderChips() {{
+    const chips = MODULES.map(m =>
+      '<button type="button" class="suggest-chip">' + escapeHtml(m) + '</button>'
+    ).join('');
+    suggestBox.innerHTML = '<div class="suggest-label">Sugerencias</div><div class="suggest-chips">' + chips + '</div>';
+    suggestBox.querySelectorAll('.suggest-chip').forEach(chip => {{
+      chip.addEventListener('click', (ev) => {{
+        ev.stopPropagation();
+        input.value = chip.textContent;
+        input.dispatchEvent(new Event('input', {{ bubbles: true }}));
+        input.focus();
+      }});
+    }});
+  }}
+
+  function renderResults(list, q) {{
+    if (!list.length) {{
+      suggestBox.innerHTML = '<div class="suggest-empty">No encontramos clases para "' + escapeHtml(q) + '". Probá con otra palabra 🦙</div>';
+      return;
+    }}
+    const items = list.map(c => {{
+      const tag = c.clase ? ('Clase ' + c.clase) : (moduleLabel(c.modulo) || 'Workflow');
+      if (c.video) {{
+        return '<a class="suggest-item" href="' + c.video + '" target="_blank" rel="noopener"><b>' + escapeHtml(c.titulo) + '</b><span class="tag">' + escapeHtml(tag) + '</span></a>';
+      }}
+      return '<div class="suggest-item" style="opacity:.55;cursor:default;"><b>' + escapeHtml(c.titulo) + '</b><span class="tag">Próximamente</span></div>';
+    }}).join('');
+    suggestBox.innerHTML = '<div class="suggest-label">Coincidencias</div><div class="suggest-list">' + items + '</div>';
+  }}
+
+  function updateSuggest() {{
+    const q = input.value.trim();
+    if (!q) renderChips();
+    else renderResults(searchCourses(q), q);
+  }}
+
+  function openSuggest() {{ suggestBox.classList.add('is-open'); }}
+  function closeSuggest() {{ suggestBox.classList.remove('is-open'); }}
+
+  input.addEventListener('focus', () => {{ updateSuggest(); openSuggest(); }});
+  input.addEventListener('input', () => {{ updateSuggest(); openSuggest(); }});
+  suggestBox.addEventListener('click', (e) => {{
+    if (e.target.closest('a.suggest-item')) closeSuggest();
+  }});
+  document.addEventListener('click', (e) => {{
+    if (!e.target.closest('.search-box')) closeSuggest();
+  }});
+  document.addEventListener('keydown', (e) => {{
+    if (e.key === 'Escape') closeSuggest();
   }});
 }})();
 

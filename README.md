@@ -13,6 +13,8 @@ aprender a usar el **CRM Llamaleads**, con:
   al recorrer el catálogo
 - Carrusel de clases por módulo (flechas + indicador de progreso), en
   desktop y mobile
+- Buscador con sugerencias: chips por módulo al enfocar vacío, y
+  resultados en vivo (con link directo a la clase) mientras se escribe
 
 Es un único archivo `index.html` autocontenido (sin backend, sin build
 step para el usuario final), generado a partir de los datos de la base de

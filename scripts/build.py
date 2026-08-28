@@ -166,15 +166,33 @@ def module_group_html(modulo, rows_subset, tag_class="", anchor_id=None):
     cards = "\n".join(card_html(r) for r in rows_subset)
     n = len(rows_subset)
     id_attr = f' id="{anchor_id}"' if anchor_id else ""
+    if n > 1:
+        dots = "\n".join(
+            f'<span class="car-dot{" is-active" if i == 0 else ""}"></span>' for i in range(n)
+        )
+        controls = f'''
+        <button class="car-arrow car-prev" type="button" aria-label="Clase anterior" disabled>
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M8 1L1.5 7.5L8 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="car-arrow car-next" type="button" aria-label="Clase siguiente">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M1 1L7.5 7.5L1 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>'''
+        dots_html = f'<div class="car-dots">{dots}</div>'
+    else:
+        controls = ""
+        dots_html = ""
     return f'''<div class="module-group"{id_attr}>
         <div class="module-head">
             <span class="module-tag {tag_class}">{esc(mod_num)}</span>
             <h3 class="module-name">{esc(mod_name)}</h3>
             <span class="module-count">{n} clase{'s' if n != 1 else ''}</span>
         </div>
+        <div class="carousel">
         <div class="card-grid">
         {cards}
+        </div>{controls}
         </div>
+        {dots_html}
     </div>'''
 
 

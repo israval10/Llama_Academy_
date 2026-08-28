@@ -385,8 +385,32 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
 .module-name{ font-size:18px; font-weight:700; letter-spacing:-.2px; color:var(--text); }
 .module-count{ font-size:12px; color:var(--text-faint); font-weight:600; margin-left:auto; }
 
-/* ---------- CARDS ---------- */
-.card-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(272px,1fr)); gap:16px; }
+/* ---------- CARDS / CARRUSEL ---------- */
+.carousel{ position:relative; }
+.card-grid{
+  display:flex; flex-wrap:nowrap; gap:16px;
+  overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+  scrollbar-width:none; -ms-overflow-style:none;
+  padding:4px 36px 8px; scroll-padding:0 36px;
+}
+.card-grid::-webkit-scrollbar{ display:none; }
+.class-card{ flex:0 0 296px; scroll-snap-align:start; }
+
+.car-arrow{
+  position:absolute; top:44%; transform:translateY(-50%); z-index:5;
+  width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:rgba(17,16,14,.86); border:1px solid var(--line-amber); color:var(--yellow);
+  cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.5); padding:0;
+  transition:opacity .2s ease, background .2s ease, transform .2s ease;
+}
+.car-arrow:hover{ background:rgba(241,199,33,.16); }
+.car-arrow:disabled{ opacity:.22; pointer-events:none; }
+.car-prev{ left:-10px; }
+.car-next{ right:-10px; }
+
+.car-dots{ display:flex; justify-content:center; align-items:center; gap:6px; margin-top:14px; }
+.car-dot{ width:6px; height:6px; border-radius:999px; background:rgba(255,255,255,.18); transition:background .2s ease, width .2s ease; }
+.car-dot.is-active{ background:var(--yellow); width:18px; }
 .class-card{
   --nivel-accent: var(--yellow);
   display:block; text-decoration:none; color:var(--text);
@@ -430,7 +454,14 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
 
 @media (max-width:640px){
   .wrap{ padding:0 20px; }
-  .card-grid{ grid-template-columns:1fr; }
+  .card-grid{
+    gap:14px; margin:0 -20px; padding:4px 20px 14px; scroll-padding:0 20px;
+  }
+  .class-card{ flex:0 0 82vw; max-width:340px; }
+  .car-arrow{ width:34px; height:34px; }
+  .car-prev{ left:2px; }
+  .car-next{ right:2px; }
+  .car-dots{ margin-top:4px; }
 }
 </style>
 </head>
@@ -572,6 +603,7 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
             <h3 class="module-name">Bienvenida y Configuración</h3>
             <span class="module-count">6 clases</span>
         </div>
+        <div class="carousel">
         <div class="card-grid">
         <a class="class-card" style="--nivel-accent:var(--yellow)" data-nivel="inicial" data-search="¿qué es llamaleads y por qué usamos este crm? presentación de llamaleads como agencia y cómo su crm potencia tu negocio de principio a fin. m1 · bienvenida y configuración" href="https://drive.google.com/file/d/1Z-MSHs-2twb5QzGtkWJR592m602ecmrn/view?usp=drive_link" target="_blank" rel="noopener">
         <div class="cc-top"><span class="cc-num">Clase 1.01</span><span class="badge badge-yellow"><span class="badge-dot"></span>🟢 Inicial</span></div>
@@ -610,6 +642,19 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
         <div class="cc-foot"><span class="cc-play">Ver clase <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 1l7 4.5L2 10V1z" fill="currentColor"/></svg></span></div>
     </a>
         </div>
+        <button class="car-arrow car-prev" type="button" aria-label="Clase anterior" disabled>
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M8 1L1.5 7.5L8 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="car-arrow car-next" type="button" aria-label="Clase siguiente">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M1 1L7.5 7.5L1 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        </div>
+        <div class="car-dots"><span class="car-dot is-active"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span></div>
     </div>
 <div class="module-group" id="modulo-basicos-m2-integraciones-esenciales">
         <div class="module-head">
@@ -617,6 +662,7 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
             <h3 class="module-name">Integraciones Esenciales</h3>
             <span class="module-count">3 clases</span>
         </div>
+        <div class="carousel">
         <div class="card-grid">
         <a class="class-card" style="--nivel-accent:var(--yellow)" data-nivel="inicial" data-search="integración con facebook e instagram conecta tu página de facebook e instagram para capturar leads de anuncios directamente en el crm. m2 · integraciones esenciales" href="https://drive.google.com/file/d/18hYvZO7hhHHRXvR3w5DGHkboUXK5isDM/view?usp=drive_link" target="_blank" rel="noopener">
         <div class="cc-top"><span class="cc-num">Clase 2.01</span><span class="badge badge-yellow"><span class="badge-dot"></span>🟢 Inicial</span></div>
@@ -637,6 +683,16 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
         <div class="cc-foot"><span class="cc-play">Ver clase <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 1l7 4.5L2 10V1z" fill="currentColor"/></svg></span></div>
     </a>
         </div>
+        <button class="car-arrow car-prev" type="button" aria-label="Clase anterior" disabled>
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M8 1L1.5 7.5L8 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="car-arrow car-next" type="button" aria-label="Clase siguiente">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M1 1L7.5 7.5L1 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        </div>
+        <div class="car-dots"><span class="car-dot is-active"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span></div>
     </div>
 <div class="module-group" id="modulo-basicos-m3-contactos-fundamentos">
         <div class="module-head">
@@ -644,6 +700,7 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
             <h3 class="module-name">Contactos: Fundamentos</h3>
             <span class="module-count">6 clases</span>
         </div>
+        <div class="carousel">
         <div class="card-grid">
         <a class="class-card" style="--nivel-accent:var(--yellow)" data-nivel="inicial" data-search="¿qué es un contacto en el crm? (≠ oportunidad) el contacto es la persona. la oportunidad es el proceso de venta. un mismo contacto puede tener muchas oportunidades. esta distinción es clave — se profundiza en el módulo 4. m3 · contactos: fundamentos" href="https://drive.google.com/file/d/1iArEMufByuWBuTBmorXWaiEhHJEVmM9n/view?usp=drive_link" target="_blank" rel="noopener">
         <div class="cc-top"><span class="cc-num">Clase 3.01</span><span class="badge badge-yellow"><span class="badge-dot"></span>🟢 Inicial</span></div>
@@ -682,6 +739,19 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
         <div class="cc-foot"><span class="cc-play">Ver clase <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 1l7 4.5L2 10V1z" fill="currentColor"/></svg></span></div>
     </a>
         </div>
+        <button class="car-arrow car-prev" type="button" aria-label="Clase anterior" disabled>
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M8 1L1.5 7.5L8 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="car-arrow car-next" type="button" aria-label="Clase siguiente">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M1 1L7.5 7.5L1 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        </div>
+        <div class="car-dots"><span class="car-dot is-active"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span></div>
     </div>
 <div class="module-group" id="modulo-basicos-m4-pipelines-y-oportunidades">
         <div class="module-head">
@@ -689,6 +759,7 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
             <h3 class="module-name">Pipelines y Oportunidades</h3>
             <span class="module-count">7 clases</span>
         </div>
+        <div class="carousel">
         <div class="card-grid">
         <a class="class-card" style="--nivel-accent:var(--yellow)" data-nivel="inicial" data-search="¿qué es un pipeline de ventas? el pipeline representa visualmente tu proceso de venta etapa por etapa, desde el primer contacto hasta el cierre. m4 · pipelines y oportunidades" href="https://drive.google.com/file/d/1rBS_eeZOQZWzJtNFg34rT_gJNa4S5FW5/view?usp=drive_link" target="_blank" rel="noopener">
         <div class="cc-top"><span class="cc-num">Clase 4.01</span><span class="badge badge-yellow"><span class="badge-dot"></span>🟢 Inicial</span></div>
@@ -733,6 +804,20 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
         <div class="cc-foot"><span class="cc-play">Ver clase <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 1l7 4.5L2 10V1z" fill="currentColor"/></svg></span></div>
     </a>
         </div>
+        <button class="car-arrow car-prev" type="button" aria-label="Clase anterior" disabled>
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M8 1L1.5 7.5L8 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="car-arrow car-next" type="button" aria-label="Clase siguiente">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M1 1L7.5 7.5L1 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        </div>
+        <div class="car-dots"><span class="car-dot is-active"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span></div>
     </div>
 <div class="module-group" id="modulo-basicos-m5-conversaciones-fundamentos">
         <div class="module-head">
@@ -740,6 +825,7 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
             <h3 class="module-name">Conversaciones: Fundamentos</h3>
             <span class="module-count">5 clases</span>
         </div>
+        <div class="carousel">
         <div class="card-grid">
         <a class="class-card" style="--nivel-accent:var(--yellow)" data-nivel="inicial" data-search="introducción al chat omnicanal el crm unifica sms, whatsapp, email, instagram dm y facebook messenger en una sola bandeja de entrada. m5 · conversaciones: fundamentos" href="https://drive.google.com/file/d/1hXf9g8ubm2RqyOgbERH2TTpRDD_MOHqY/view?usp=drive_link" target="_blank" rel="noopener">
         <div class="cc-top"><span class="cc-num">Clase 5.01</span><span class="badge badge-yellow"><span class="badge-dot"></span>🟢 Inicial</span></div>
@@ -772,6 +858,18 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
         <div class="cc-foot"><span class="cc-play">Ver clase <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 1l7 4.5L2 10V1z" fill="currentColor"/></svg></span></div>
     </a>
         </div>
+        <button class="car-arrow car-prev" type="button" aria-label="Clase anterior" disabled>
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M8 1L1.5 7.5L8 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="car-arrow car-next" type="button" aria-label="Clase siguiente">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M1 1L7.5 7.5L1 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        </div>
+        <div class="car-dots"><span class="car-dot is-active"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span></div>
     </div>
     </div>
 <div class="nivel-block" id="nivel-intermedio">
@@ -786,6 +884,7 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
             <h3 class="module-name">Campos Personalizados y Segmentación</h3>
             <span class="module-count">4 clases</span>
         </div>
+        <div class="carousel">
         <div class="card-grid">
         <a class="class-card" style="--nivel-accent:var(--red)" data-nivel="intermedio" data-search="¿qué es un campo personalizado y para qué sirve? los campos estándar del crm no siempre son suficientes. los campos personalizados capturan los datos únicos de tu negocio. m6 · campos personalizados y segmentación" href="https://drive.google.com/file/d/1Wl4FuQdZ7m_xGZDZkRjLVFROxF6-OWyO/view?usp=drive_link" target="_blank" rel="noopener">
         <div class="cc-top"><span class="cc-num">Clase 6.01</span><span class="badge badge-red"><span class="badge-dot"></span>🔵 Intermedio</span></div>
@@ -812,6 +911,17 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
         <div class="cc-foot"><span class="cc-play">Ver clase <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 1l7 4.5L2 10V1z" fill="currentColor"/></svg></span></div>
     </a>
         </div>
+        <button class="car-arrow car-prev" type="button" aria-label="Clase anterior" disabled>
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M8 1L1.5 7.5L8 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="car-arrow car-next" type="button" aria-label="Clase siguiente">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M1 1L7.5 7.5L1 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        </div>
+        <div class="car-dots"><span class="car-dot is-active"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span></div>
     </div>
     </div>
     </div>
@@ -830,6 +940,7 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
             <h3 class="module-name">Campañas Email</h3>
             <span class="module-count">3 clases</span>
         </div>
+        <div class="carousel">
         <div class="card-grid">
         <a class="class-card" style="--nivel-accent:var(--violet)" data-nivel="avanzado" data-search="configuración inicial de meta y whatsapp vincula tu cuenta de meta y tu número de whatsapp business como base para automatizar la captación de leads. m_ campañas email" href="https://drive.google.com/file/d/1SdXswM7_xvzu9FDJav9hgayskFzie3-Z/view?usp=drive_link" target="_blank" rel="noopener">
         <div class="cc-top"><span class="cc-num">Workflow</span><span class="badge badge-ink"><span class="badge-dot"></span>🟣 Avanzado</span></div>
@@ -850,6 +961,16 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
         <div class="cc-foot"><span class="cc-play">Ver clase <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 1l7 4.5L2 10V1z" fill="currentColor"/></svg></span></div>
     </a>
         </div>
+        <button class="car-arrow car-prev" type="button" aria-label="Clase anterior" disabled>
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M8 1L1.5 7.5L8 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="car-arrow car-next" type="button" aria-label="Clase siguiente">
+          <svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M1 1L7.5 7.5L1 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        </div>
+        <div class="car-dots"><span class="car-dot is-active"></span>
+<span class="car-dot"></span>
+<span class="car-dot"></span></div>
     </div>
 <div class="module-group" id="modulo-otros-workflows-otros">
         <div class="module-head">
@@ -857,6 +978,7 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
             <h3 class="module-name">Otros</h3>
             <span class="module-count">1 clase</span>
         </div>
+        <div class="carousel">
         <div class="card-grid">
         <a class="class-card" style="--nivel-accent:var(--yellow)" data-nivel="inicial" data-search="iniciar conversación en móvil para contactos con nombre de usuario iniciar una conversación desde el celular con contactos que solo tienen guardado un nombre de usuario en lugar de un número. otros" href="https://drive.google.com/file/d/184m0rDaDIw4F0OLuoRA_1-YfsyjBR_9T/view" target="_blank" rel="noopener">
         <div class="cc-top"><span class="cc-num">Workflow</span><span class="badge badge-yellow"><span class="badge-dot"></span>🟢 Inicial</span></div>
@@ -865,6 +987,8 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
         <div class="cc-foot"><span class="cc-play">Ver clase <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 1l7 4.5L2 10V1z" fill="currentColor"/></svg></span></div>
     </a>
         </div>
+        </div>
+        
     </div>
     </div>
   </section>
@@ -882,6 +1006,56 @@ h1,h2,h3,h4{ font-family:var(--font-display); margin:0; color:var(--text); }
 
 <script>
 const COURSES = [{"clase": "1.01", "titulo": "¿Qué es Llamaleads y por qué usamos este CRM?", "desc": "Presentación de Llamaleads como agencia y cómo su CRM potencia tu negocio de principio a fin.", "modulo": "M1 · Bienvenida y Configuración", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1Z-MSHs-2twb5QzGtkWJR592m602ecmrn/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "1.02", "titulo": "Tour completo de la plataforma (interfaz 2025)", "desc": "Recorrido visual por todos los módulos del dashboard del CRM: menú, navegación y accesos rápidos.", "modulo": "M1 · Bienvenida y Configuración", "nivel": "Inicial", "video": "https://drive.google.com/file/d/15Ea3leXmc57vrZoW8myzoGdUoRVIdGe-/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "1.03", "titulo": "Accesos, contraseñas y primer ingreso", "desc": "Cómo ingresar a tu cuenta, cambiar contraseña y activar la verificación de dos pasos.", "modulo": "M1 · Bienvenida y Configuración", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1M59JQb0QoSQqTdTElMtGbjbziKpPuX2X/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "1.04", "titulo": "Agregar y gestionar usuarios", "desc": "Crear usuarios para tu equipo, asignar roles y controlar accesos desde la configuración.", "modulo": "M1 · Bienvenida y Configuración", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1EIsLjkk6e_VkxsYdt7FrgvyN0DQBEa4x/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "1.05", "titulo": "Configuración del perfil y del negocio", "desc": "Completar el perfil: logo, dirección, zona horaria, moneda y datos de contacto del negocio.", "modulo": "M1 · Bienvenida y Configuración", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1nuF579iZyyPqXHKg0RPvlmfh60w_8G4w/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "1.06", "titulo": "Descargar e instalar la app Lead Connector", "desc": "Instalar la app Lead Connector en iOS y Android para gestionar el CRM desde el celular.", "modulo": "M1 · Bienvenida y Configuración", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1tslNdO3W9oKwb052e-vVs6Kv2p_MZvkk/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "2.01", "titulo": "Integración con Facebook e Instagram", "desc": "Conecta tu página de Facebook e Instagram para capturar leads de anuncios directamente en el CRM.", "modulo": "M2 · Integraciones Esenciales", "nivel": "Inicial", "video": "https://drive.google.com/file/d/18hYvZO7hhHHRXvR3w5DGHkboUXK5isDM/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "2.02", "titulo": "Integración con Google (Ads, Analytics y Calendar)", "desc": "Una sola integración con dos usos: (1) conectar Google Ads / Analytics para ver datos de campaña, y (2) sincronizar Google Calendar para gestión de citas. Google My Business ya no está activo.", "modulo": "M2 · Integraciones Esenciales", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1WSArwjPfsO0HcG4t4v5qMCe332xV8pAt/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "2.03", "titulo": "Integración de correo electrónico (LC Email / SMTP)", "desc": "Configurar el correo del negocio para enviar y recibir emails desde el CRM.", "modulo": "M2 · Integraciones Esenciales", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1EP14yhB5e7hDAshPMDDFGd9o4-nGOOLu/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "3.01", "titulo": "¿Qué es un contacto en el CRM? (≠ oportunidad)", "desc": "El contacto es la persona. La oportunidad es el proceso de venta. Un mismo contacto puede tener muchas oportunidades. Esta distinción es clave — se profundiza en el Módulo 4.", "modulo": "M3 · Contactos: Fundamentos", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1iArEMufByuWBuTBmorXWaiEhHJEVmM9n/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "3.02", "titulo": "Vista de detalle del contacto", "desc": "Explorar el perfil completo: actividad, conversaciones, oportunidades vinculadas, citas y campos personalizados.", "modulo": "M3 · Contactos: Fundamentos", "nivel": "Inicial", "video": "https://drive.google.com/file/d/113BRwe_oahTmm5bbBeFRnbzQ0fQ-J5cR/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "3.03", "titulo": "Tipos de contacto Y Tags", "desc": "Clasificar contactos: lead, cliente, proveedor, etc., para segmentar la base desde el inicio.", "modulo": "M3 · Contactos: Fundamentos", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1RndYpTjhNPPgaCKC2ZdGbreDW6f8UhRA/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "3.04", "titulo": "Tags: Como crear y administrar", "desc": "Crear y asignar etiquetas para categorizar contactos y activarlos como disparadores en automatizaciones.", "modulo": "M3 · Contactos: Fundamentos", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1BrJ3cbmgesA3IQAHm-bqnprd2G4n65RZ/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "3.05", "titulo": "Crear y editar contactos manualmente", "desc": "Formulario de creación: campos obligatorios, información adicional y propiedades personalizadas.", "modulo": "M3 · Contactos: Fundamentos", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1ktG9rZZvKYecya783GOWABCDcFv07Y-W/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "3.06", "titulo": "Importar y Exportar contactos desde CSV", "desc": "Importación masiva: mapeo de columnas, gestión de duplicados y revisión de errores post-carga.", "modulo": "M3 · Contactos: Fundamentos", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1iiPS7UUB1pqBTRZ_WX-ZX6VvBfgLY55U/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "4.01", "titulo": "¿Qué es un pipeline de ventas?", "desc": "El pipeline representa visualmente tu proceso de venta etapa por etapa, desde el primer contacto hasta el cierre.", "modulo": "M4 · Pipelines y Oportunidades", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1rBS_eeZOQZWzJtNFg34rT_gJNa4S5FW5/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "4.02", "titulo": "¿Qué es una oportunidad? (≠ contacto)", "desc": "La oportunidad es el registro de venta de un contacto. Un contacto puede tener múltiples oportunidades activas al mismo tiempo.", "modulo": "M4 · Pipelines y Oportunidades", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1pfk2COmx72PNA_27M0kxfOVHCX9idV1o/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "4.03", "titulo": "Crear tu primer pipeline", "desc": "Paso a paso para crear pipelines con etapas personalizadas según el proceso de ventas real.", "modulo": "M4 · Pipelines y Oportunidades", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1u03pVBvHvVDyIaMt1D6THGkzGEiW66m9/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "4.04", "titulo": "Crear y mover oportunidades", "desc": "Crear oportunidades manualmente, asignar valor, responsable y moverlas entre etapas del pipeline.", "modulo": "M4 · Pipelines y Oportunidades", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1WdeLQ4QqYY7TCkKcYInHT14FtIcKHNci/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "4.05", "titulo": "Vista Kanban vs. Vista Lista", "desc": "Cambiar entre la vista de tarjetas (Kanban) y la vista de lista para distintos análisis de ventas.", "modulo": "M4 · Pipelines y Oportunidades", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1Knq_OGYoyTzYwQSpC5HBNvYLkGg78PNQ/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "4.06", "titulo": "Filtrar y buscar oportunidades", "desc": "Usar filtros por etapa, valor, usuario asignado y fuente para encontrar oportunidades rápidamente.", "modulo": "M4 · Pipelines y Oportunidades", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1wN9GiwbBQptzQOoVkGPGP2WOQ47D88Fp/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "4.07", "titulo": "Smartlists", "desc": "Crear y guardar Smartlists (listas inteligentes) con combinaciones de filtros predefinidas para acceder rápidamente a segmentos de oportunidades recurrentes, sin tener que configurar los filtros cada vez.", "modulo": "M4 · Pipelines y Oportunidades", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1ZYhRKLiKKbvVRmxVj2KTfYP7xbDSZOH_/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "5.01", "titulo": "Introducción al chat omnicanal", "desc": "El CRM unifica SMS, WhatsApp, email, Instagram DM y Facebook Messenger en una sola bandeja de entrada.", "modulo": "M5 · Conversaciones: Fundamentos", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1hXf9g8ubm2RqyOgbERH2TTpRDD_MOHqY/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "5.02", "titulo": "WhatsApp API vs. WhatsApp SMS", "desc": "Diferencias clave, costos, capacidades y cuándo usar cada modalidad.", "modulo": "M5 · Conversaciones: Fundamentos", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1l0p8HWHRE5oBX2qvQC1noih2ejswIVVe/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "5.03", "titulo": "Buenas prácticas para WhatsApp Business", "desc": "Reglas de Meta: horarios, formato, frecuencia y cómo evitar que el número sea bloqueado.", "modulo": "M5 · Conversaciones: Fundamentos", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1YnHfd-0gnli8V4pPamz9Ruakvcji7v0G/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "5.04", "titulo": "Variables dinámicas", "desc": "", "modulo": "M5 · Conversaciones: Fundamentos", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1y2NvFMHntWfUjLi0wX4X03qQ6De5njEZ/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "5.05", "titulo": "Mensajes predeterminados (Snippets)", "desc": "Crear y usar plantillas de respuesta rápida con variables personalizadas para agilizar la atención.", "modulo": "M5 · Conversaciones: Fundamentos", "nivel": "Inicial", "video": "https://drive.google.com/file/d/1KIn68SuOy14HRP8oov2rUamUws0qJBfH/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-inicial"}, {"clase": "6.01", "titulo": "¿Qué es un campo personalizado y para qué sirve?", "desc": "Los campos estándar del CRM no siempre son suficientes. Los campos personalizados capturan los datos únicos de tu negocio.", "modulo": "M6 · Campos Personalizados y Segmentación", "nivel": "Intermedio", "video": "https://drive.google.com/file/d/1Wl4FuQdZ7m_xGZDZkRjLVFROxF6-OWyO/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-intermedio"}, {"clase": "6.02", "titulo": "Tipos de campos personalizados", "desc": "Texto, número, fecha, checkbox, lista desplegable, archivo, teléfono, moneda — cuándo usar cada tipo.", "modulo": "M6 · Campos Personalizados y Segmentación", "nivel": "Intermedio", "video": "https://drive.google.com/file/d/1KSip1teQagHHdehXBqzSVKvSF1Qt9Rw4/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-intermedio"}, {"clase": "6.03", "titulo": "Carpetas de campos personalizados", "desc": "Organizar campos en carpetas temáticas para mantener el orden cuando hay muchos campos. Diferencia entre carpetas de contacto y de oportunidad.", "modulo": "M6 · Campos Personalizados y Segmentación", "nivel": "Intermedio", "video": "https://drive.google.com/file/d/1l-Y2gYupALEPS_qEMIoWK5qsUD1rlr7a/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-intermedio"}, {"clase": "6.04", "titulo": "Acciones masivas: contactos y oportunidades", "desc": "Aplicar tags, cambiar propietario, actualizar etapa, enviar a campaña o eliminar en lote — tanto para contactos como para oportunidades.", "modulo": "M6 · Campos Personalizados y Segmentación", "nivel": "Intermedio", "video": "https://drive.google.com/file/d/1av_S3iIssFhOPwqbMipG8z20ALQRzfnO/view?usp=drive_link", "categoria": "Básicos", "anchor": "#nivel-intermedio"}, {"clase": null, "titulo": "Configuración inicial de Meta y WhatsApp", "desc": "Vincula tu cuenta de Meta y tu número de WhatsApp Business como base para automatizar la captación de leads.", "modulo": "M_ Campañas Email", "nivel": "Avanzado", "video": "https://drive.google.com/file/d/1SdXswM7_xvzu9FDJav9hgayskFzie3-Z/view?usp=drive_link", "categoria": "Otros Workflows", "anchor": "#otros-workflows"}, {"clase": null, "titulo": "Configuración del workflow para leads de Meta", "desc": "Configura el workflow que recibirá, organizará y gestionará automáticamente los leads provenientes de Meta.", "modulo": "M_ Campañas Email", "nivel": "Avanzado", "video": "https://drive.google.com/file/d/1zAMVaLwzzf84xc_qQQvBKx2_AveOli3r/view?usp=drive_link", "categoria": "Otros Workflows", "anchor": "#otros-workflows"}, {"clase": null, "titulo": "Automatización, seguimiento y pruebas de la campaña", "desc": "Completa la automatización, configura el seguimiento de los leads y valida que todo el flujo funcione correctamente antes de lanzar la campaña.", "modulo": "M_ Campañas Email", "nivel": "Avanzado", "video": "https://drive.google.com/file/d/12whQcSQEfbnM_PhV04cJmhetgJGWvkz7/view?usp=drive_link", "categoria": "Otros Workflows", "anchor": "#otros-workflows"}, {"clase": null, "titulo": "Iniciar conversación en móvil para contactos con nombre de usuario", "desc": "Iniciar una conversación desde el celular con contactos que solo tienen guardado un nombre de usuario en lugar de un número.", "modulo": "Otros", "nivel": "Inicial", "video": "https://drive.google.com/file/d/184m0rDaDIw4F0OLuoRA_1-YfsyjBR_9T/view", "categoria": "Otros Workflows", "anchor": "#otros-workflows"}];
+
+/* ---------------- Carruseles de clases (mobile) ---------------- */
+(function() {
+  document.querySelectorAll('.module-group').forEach(group => {
+    const grid = group.querySelector('.card-grid');
+    const prev = group.querySelector('.car-prev');
+    const next = group.querySelector('.car-next');
+    const dots = Array.from(group.querySelectorAll('.car-dot'));
+    if (!grid || !dots.length) return;
+
+    function step() {
+      const cards = grid.querySelectorAll('.class-card');
+      if (cards.length > 1) {
+        return cards[1].offsetLeft - cards[0].offsetLeft;
+      }
+      return grid.clientWidth;
+    }
+
+    function activeIndex() {
+      const maxScroll = grid.scrollWidth - grid.clientWidth;
+      if (maxScroll <= 1) return 0;
+      const frac = grid.scrollLeft / maxScroll;
+      return Math.round(frac * (dots.length - 1));
+    }
+
+    function refresh() {
+      const idx = Math.max(0, Math.min(dots.length - 1, activeIndex()));
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
+      if (prev) prev.disabled = grid.scrollLeft <= 4;
+      if (next) next.disabled = grid.scrollLeft >= grid.scrollWidth - grid.clientWidth - 4;
+    }
+
+    if (prev) prev.addEventListener('click', () => {
+      grid.scrollBy({ left: -step(), behavior: 'smooth' });
+    });
+    if (next) next.addEventListener('click', () => {
+      grid.scrollBy({ left: step(), behavior: 'smooth' });
+    });
+
+    let ticking = false;
+    grid.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { refresh(); ticking = false; });
+    });
+
+    window.addEventListener('resize', refresh);
+    refresh();
+  });
+})();
 
 /* ---------------- Menú hamburguesa del navbar ---------------- */
 (function() {

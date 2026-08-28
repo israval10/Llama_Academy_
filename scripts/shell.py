@@ -406,8 +406,32 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; color:var(--text); }}
 .module-name{{ font-size:18px; font-weight:700; letter-spacing:-.2px; color:var(--text); }}
 .module-count{{ font-size:12px; color:var(--text-faint); font-weight:600; margin-left:auto; }}
 
-/* ---------- CARDS ---------- */
-.card-grid{{ display:grid; grid-template-columns:repeat(auto-fill,minmax(272px,1fr)); gap:16px; }}
+/* ---------- CARDS / CARRUSEL ---------- */
+.carousel{{ position:relative; }}
+.card-grid{{
+  display:flex; flex-wrap:nowrap; gap:16px;
+  overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+  scrollbar-width:none; -ms-overflow-style:none;
+  padding:4px 36px 8px; scroll-padding:0 36px;
+}}
+.card-grid::-webkit-scrollbar{{ display:none; }}
+.class-card{{ flex:0 0 296px; scroll-snap-align:start; }}
+
+.car-arrow{{
+  position:absolute; top:44%; transform:translateY(-50%); z-index:5;
+  width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:rgba(17,16,14,.86); border:1px solid var(--line-amber); color:var(--yellow);
+  cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.5); padding:0;
+  transition:opacity .2s ease, background .2s ease, transform .2s ease;
+}}
+.car-arrow:hover{{ background:rgba(241,199,33,.16); }}
+.car-arrow:disabled{{ opacity:.22; pointer-events:none; }}
+.car-prev{{ left:-10px; }}
+.car-next{{ right:-10px; }}
+
+.car-dots{{ display:flex; justify-content:center; align-items:center; gap:6px; margin-top:14px; }}
+.car-dot{{ width:6px; height:6px; border-radius:999px; background:rgba(255,255,255,.18); transition:background .2s ease, width .2s ease; }}
+.car-dot.is-active{{ background:var(--yellow); width:18px; }}
 .class-card{{
   --nivel-accent: var(--yellow);
   display:block; text-decoration:none; color:var(--text);
@@ -451,7 +475,14 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; color:var(--text); }}
 
 @media (max-width:640px){{
   .wrap{{ padding:0 20px; }}
-  .card-grid{{ grid-template-columns:1fr; }}
+  .card-grid{{
+    gap:14px; margin:0 -20px; padding:4px 20px 14px; scroll-padding:0 20px;
+  }}
+  .class-card{{ flex:0 0 82vw; max-width:340px; }}
+  .car-arrow{{ width:34px; height:34px; }}
+  .car-prev{{ left:2px; }}
+  .car-next{{ right:2px; }}
+  .car-dots{{ margin-top:4px; }}
 }}
 </style>
 </head>
@@ -558,6 +589,56 @@ h1,h2,h3,h4{{ font-family:var(--font-display); margin:0; color:var(--text); }}
 
 <script>
 const COURSES = {COURSES_JSON};
+
+/* ---------------- Carruseles de clases (mobile) ---------------- */
+(function() {{
+  document.querySelectorAll('.module-group').forEach(group => {{
+    const grid = group.querySelector('.card-grid');
+    const prev = group.querySelector('.car-prev');
+    const next = group.querySelector('.car-next');
+    const dots = Array.from(group.querySelectorAll('.car-dot'));
+    if (!grid || !dots.length) return;
+
+    function step() {{
+      const cards = grid.querySelectorAll('.class-card');
+      if (cards.length > 1) {{
+        return cards[1].offsetLeft - cards[0].offsetLeft;
+      }}
+      return grid.clientWidth;
+    }}
+
+    function activeIndex() {{
+      const maxScroll = grid.scrollWidth - grid.clientWidth;
+      if (maxScroll <= 1) return 0;
+      const frac = grid.scrollLeft / maxScroll;
+      return Math.round(frac * (dots.length - 1));
+    }}
+
+    function refresh() {{
+      const idx = Math.max(0, Math.min(dots.length - 1, activeIndex()));
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
+      if (prev) prev.disabled = grid.scrollLeft <= 4;
+      if (next) next.disabled = grid.scrollLeft >= grid.scrollWidth - grid.clientWidth - 4;
+    }}
+
+    if (prev) prev.addEventListener('click', () => {{
+      grid.scrollBy({{ left: -step(), behavior: 'smooth' }});
+    }});
+    if (next) next.addEventListener('click', () => {{
+      grid.scrollBy({{ left: step(), behavior: 'smooth' }});
+    }});
+
+    let ticking = false;
+    grid.addEventListener('scroll', () => {{
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {{ refresh(); ticking = false; }});
+    }});
+
+    window.addEventListener('resize', refresh);
+    refresh();
+  }});
+}})();
 
 /* ---------------- Menú hamburguesa del navbar ---------------- */
 (function() {{

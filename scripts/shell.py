@@ -22,6 +22,14 @@ with open(BUILD_DIR / "_courses.json", encoding="utf-8") as f:
 HTML = f'''<!DOCTYPE html>
 <html lang="es">
 <head>
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){{
+        c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    }})(window, document, "clarity", "script", "yg75snm50a");
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LlamaLeads Academy — Aprende el CRM Llamaleads</title>

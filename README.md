@@ -15,6 +15,7 @@ aprender a usar el **CRM Llamaleads**, con:
   desktop y mobile
 - Buscador con sugerencias: chips por módulo al enfocar vacío, y
   resultados en vivo (con link directo a la clase) mientras se escribe
+- Tracking con Microsoft Clarity
 
 Es un único archivo `index.html` autocontenido (sin backend, sin build
 step para el usuario final), generado a partir de los datos de la base de
